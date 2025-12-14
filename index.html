@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <title>Esse Gi Photography | Salvatore Gasparre</title>
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.rel='stylesheet'">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #252525;
+      --bg-accent: #2c2c2c;
+      --text-primary: #fff;
+      --text-secondary: #ccc;
+      --accent: #d93a3a;
+      --accent-hover: #e05c5c;
+      --accent-secondary: #bf2c2c;
+      --transition: all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', 'Helvetica Neue', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      font-weight: 300;
+    }
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    @media (max-width: 768px) {
+      #particles-js { display: none !important; }
+    }
+    .loader {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--bg-primary);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 9999;
+      transition: opacity 0.4s;
+    }
+    .loader-content { text-align: center; }
+    .loader-spinner {
+      width: 40px; height: 40px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-top: 3px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+    .loader-text {
+      font-size: 1rem;
+      letter-spacing: 2px;
+      color: var(--accent);
+    }
+    @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+    header {
+      position: fixed; top: 0; width: 100%; z-index: 1000;
+      background: rgba(26,26,26,0.9);
+      backdrop-filter: blur(10px);
+      transition: var(--transition);
+      padding: .8rem 0;
+    }
+    nav {
+      display: flex; justify-content: space-between; align-items: center;
+      width: 95%; max-width: 1200px; margin: 0 auto;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, var(--accent), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 2px;
+      display: flex; align-items: center; gap: 8px;
+      padding: .15rem .4rem;
+    }
+    .logo-photo i { font-size: 1.2rem; color: var(--accent); }
+    .logo-photo span { font-weight: 700; letter-spacing: 2px; }
+    .nav-links {
+      display: flex; list-style: none; gap: 1.2rem;
+    }
+    .nav-links a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: .95rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: .5rem 0;
+      position: relative;
+      transition: color .2s;
+    }
+    .nav-links a:after {
+      content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px;
+      background: var(--accent); transition: width .3s;
+    }
+    .nav-links a:hover:after { width: 100%; }
+    .social-links {
+      display: flex; gap: 1.1rem;
+    }
+    .social-links a {
+      color: var(--text-secondary);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.04);
+      transition: background .2s, color .2s;
+    }
+    .social-links a:hover { color: var(--accent); background: rgba(217,58,58,0.11); }
+    .menu-btn {
+      display: none;
+      background: none; border: none;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      transition: background .2s;
+    }
+    .menu-btn:hover { background: rgba(217,58,58,0.1); }
+    @media (max-width: 968px) {
+      .nav-links {
+        position: fixed; top: 60px; left: 0; width: 100%;
+        flex-direction: column;
+        background: rgba(26,26,26,0.97);
+        backdrop-filter: blur(10px);
+        padding: 1.2rem;
+        gap: 1.1rem;
+        display: none;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.23);
+      }
+      .nav-links.active { display: flex; }
+      .menu-btn { display: flex; align-items: center; justify-content: center; }
+    }
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('images/home-bg.jpg') center/cover no-repeat;
+      z-index: -2;
+      background-attachment: scroll;
+    }
+    @media (min-width: 1024px) {
+      .hero-bg { background-attachment: fixed; }
+    }
+    .hero-content {
+      text-align: center;
+      z-index: 2;
+      padding: 0 1rem;
+      max-width: 800px;
+    }
+    .hero-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: .7rem;
+      position: relative;
+      display: inline-block;
+      padding: .45rem .9rem;
+      letter-spacing: 2px;
+    }
+    .hero-subtitle::before, .hero-subtitle::after {
+      content: '';
+      position: absolute;
+      top: 50%; width: 25px; height: 1px;
+      background: var(--accent);
+    }
+    .hero-subtitle::before { left: -32px; }
+    .hero-subtitle::after { right: -32px; }
+    .hero-title {
+      font-size: clamp(2.1rem, 8vw, 4.1rem);
+      font-weight: 300;
+      margin-bottom: 1.2rem;
+      line-height: 1.1;
+      background: linear-gradient(45deg, var(--text-primary), var(--accent), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+    }
+    .hero-cta { margin-top: 2.2rem; }
+    .btn {
+      display: inline-block;
+      padding: .9rem 2rem;
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: .93rem;
+      cursor: pointer;
+      border-radius: 30px;
+      box-shadow: 0 0 8px rgba(217,58,58,0.23);
+      transition: background .2s, color .2s, box-shadow .2s;
+    }
+    .btn:hover {
+      color: var(--text-primary);
+      background: var(--accent);
+      box-shadow: 0 0 15px rgba(217,58,58,0.3);
+    }
+    .scroll-down {
+      position: absolute;
+      bottom: 20px; left: 50%;
+      transform: translateX(-50%);
+      color: var(--text-secondary);
+      font-size: 2rem;
+      animation: bounce 2s infinite;
+      cursor: pointer;
+      z-index: 10;
+    }
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%);}
+      40% { transform: translateY(-13px) translateX(-50%);}
+      60% { transform: translateY(-7px) translateX(-50%);}
+    }
+    /* PORTFOLIO */
+    .portfolio {
+      padding: 4rem 0 3rem;
+      background: var(--bg-secondary);
+      position: relative;
+    }
+    .section-title {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2.2rem;
+      font-weight: 300;
+      position: relative;
+    }
+    .section-title:after {
+      content: '';
+      position: absolute;
+      bottom: -.7rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 45px; height: 2px;
+      background: var(--accent);
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: .7rem;
+      margin-top: 1.1rem;
+    }
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 7px;
+      cursor: pointer;
+      aspect-ratio: 3/4;
+      background: #191919;
+    }
+    .gallery-item::after {
+      content: "ESSE GI Photography";
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      color: rgba(255,255,255,0.65);
+      font-size: 1rem;
+      font-family: 'Inter', 'Helvetica Neue', sans-serif;
+      pointer-events: none;
+      z-index: 2;
+      transform: rotate(-20deg);
+      text-shadow: 0 1px 6px rgba(0,0,0,0.33);
+      letter-spacing: 2px;
+      font-weight: 400;
+      user-select: none;
+    }
+    .gallery-img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
+      border-radius: 7px;
+      transition: none;
+      will-change: transform;
+    }
+    /* Overlay and title removed for performance */
+    /* LIGHTBOX */
+    .lightbox {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.95);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+      opacity: 0; pointer-events: none;
+      transition: opacity .2s;
+    }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox-content {
+      position: relative;
+      max-width: 95vw;
+      max-height: 88vh;
+      margin: 0 auto;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 8px;
+    }
+    .lightbox-img-wrapper {
+      position: relative; display: inline-block;
+      max-width: 90vw; max-height: 70vh;
+    }
+    .lightbox-img-wrapper::after {
+      content: "ESSE GI Photography";
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      color: rgba(255,255,255,0.80);
+      font-size: 1.45rem;
+      font-family: 'Inter', 'Helvetica Neue', sans-serif;
+      pointer-events: none;
+      z-index: 10;
+      transform: rotate(-20deg);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.45);
+      letter-spacing: 2px;
+      font-weight: 400;
+      user-select: none;
+    }
+    .lightbox-img {
+      max-width: 90vw; max-height: 70vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 7px 24px rgba(0,0,0,0.33);
+      transition: none;
+      will-change: transform;
+    }
+    .lightbox-close {
+      position: absolute; top: -36px; right: 0;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.09);
+      transition: background .15s;
+    }
+    .lightbox-close:hover { background: var(--accent); }
+    /* .lightbox-caption removed for performance */
+    /* ABOUT */
+    .about {
+      padding: 4rem 0 3rem;
+      background: var(--bg-primary);
+      position: relative;
+      overflow: hidden;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+    .about-image {
+      position: relative;
+    }
+    .about-img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 7px 16px rgba(0,0,0,0.32);
+    }
+    .about-content h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1.1rem;
+      font-weight: 300;
+      position: relative;
+      display: inline-block;
+    }
+    .about-content h3::after {
+      content: '';
+      position: absolute;
+      bottom: -6px; left: 0; width: 35px; height: 2px;
+      background: var(--accent);
+    }
+    /* CONTACT */
+    .contact {
+      padding: 4rem 0 2.2rem;
+      background: var(--bg-secondary);
+      position: relative;
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .contact-info {
+      display: flex; flex-direction: column; gap: 1.2rem;
+    }
+    .contact-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+    }
+    .contact-icon {
+      font-size: 1.2rem;
+      color: var(--accent);
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(217,58,58,0.09);
+    }
+    .contact-form {
+      display: flex; flex-direction: column; gap: 1.1rem;
+    }
+    .form-group { position: relative; }
+    .form-input {
+      width: 100%;
+      padding: .8rem;
+      background: var(--bg-accent);
+      border: 1px solid #333;
+      color: var(--text-primary);
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .form-label {
+      position: absolute;
+      top: .8rem; left: .8rem;
+      color: var(--text-secondary);
+      font-size: .95rem;
+      pointer-events: none;
+      background: transparent;
+      transition: color .2s;
+    }
+    textarea.form-input {
+      min-height: 110px;
+      resize: vertical;
+    }
+    /* FOOTER */
+    footer {
+      background: var(--bg-primary);
+      padding: 2rem 0 1.1rem;
+      text-align: center;
+      position: relative;
+    }
+    .footer-content {
+      display: flex; flex-direction: column; gap: 1.1rem;
+    }
+    .footer-links {
+      display: flex; justify-content: center; gap: 1.1rem; flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: var(--text-secondary);
+      position: relative;
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .copyright {
+      color: var(--text-secondary);
+      font-size: .93rem;
+      margin-top: 1.1rem;
+      opacity: 0.7;
+    }
+    /* MEDIA QUERIES */
+    @media (max-width: 968px) {
+      .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 1.6rem; }
+      .section-title { font-size: 1.5rem; }
+      .footer-links { gap: .8rem; }
+    }
+    @media (max-width: 768px) {
+      header { padding: .5rem 0; }
+      .hero-title { font-size: 2rem; }
+      .hero-content { padding: 0 .4rem; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .about-grid, .contact-grid { gap: 1.1rem; }
+      .about-img { box-shadow: 0 3px 8px rgba(0,0,0,0.19);}
+      .lightbox-content, .lightbox-img-wrapper, .lightbox-img {
+        max-width: 98vw !important; max-height: 65vh !important;
+      }
+      .lightbox-caption { font-size: .97rem; }
+      .btn { padding: .7rem 1.1rem; font-size: .9rem; }
+      .section-title { font-size: 1.15rem; }
+      .gallery-title { font-size: .86rem; }
+      .gallery-grid { gap: .4rem; }
+      .about-content h3 { font-size: 1.05rem; }
+      .footer-links { gap: .5rem; }
+      .copyright { font-size: .87rem; }
+    }
+    @media (max-width: 480px) {
+      .gallery-grid { grid-template-columns: 1fr; }
+      .hero-title { font-size: 1.2rem; }
+      .btn { font-size: .85rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="loader">
+    <div class="loader-content">
+      <div class="loader-spinner"></div>
+      <p class="loader-text">CARICAMENTO</p>
+    </div>
+  </div>
+  <header>
+    <nav>
+      <a href="#home" class="logo logo-photo">
+        <i class="fas fa-camera-retro"></i>
+        <span>ESSE GI</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#about">Chi Sono</a></li>
+        <li><a href="#contact">Contatti</a></li>
+      </ul>
+      <div class="social-links">
+        <a href="https://www.instagram.com/_esse.gi.photography_/" target="_blank">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </div>
+      <button class="menu-btn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </nav>
+  </header>
+  <section id="home" class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <p class="hero-subtitle">Esse Gi Photography</p>
+      <h1 class="hero-title">
+        Salvatore Gasparre<br>
+        <span style="font-weight:300;font-style:italic;">Visual Storytelling</span>
+      </h1>
+      <div class="hero-cta">
+        <a href="#portfolio" class="btn">Esplora il Portfolio</a>
+      </div>
+    </div>
+    <div class="scroll-down" onclick="scrollToSection('#portfolio')">
+      <i class="fas fa-chevron-down"></i>
+    </div>
+  </section>
+  <section id="portfolio" class="portfolio">
+    <div class="container">
+      <h2 class="section-title">I Miei Scatti</h2>
+      <div class="gallery-grid">
+        <!-- PAESAGGI -->
+        <div class="gallery-item">
+          <img src="images/paesaggio/paesaggio1.jpg" class="gallery-img" alt="Paesaggio" loading="lazy"
+            srcset="images/paesaggio/paesaggio1.jpg 600w, images/paesaggio/paesaggio1.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/paesaggio/paesaggio11.jpg" class="gallery-img" alt="Paesaggio" loading="lazy"
+            srcset="images/paesaggio/paesaggio11.jpg 600w, images/paesaggio/paesaggio11.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/paesaggio/paesaggio2.jpg" class="gallery-img" alt="Paesaggio" loading="lazy"
+            srcset="images/paesaggio/paesaggio2.jpg 600w, images/paesaggio/paesaggio2.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/paesaggio/paesaggio3.jpg" class="gallery-img" alt="Paesaggio" loading="lazy"
+            srcset="images/paesaggio/paesaggio3.jpg 600w, images/paesaggio/paesaggio3.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/paesaggio/paesaggio4.jpg" class="gallery-img" alt="Paesaggio" loading="lazy"
+            srcset="images/paesaggio/paesaggio4.jpg 600w, images/paesaggio/paesaggio4.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/paesaggio/paesaggio5.jpg" class="gallery-img" alt="Paesaggio" loading="lazy"
+            srcset="images/paesaggio/paesaggio5.jpg 600w, images/paesaggio/paesaggio5.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/paesaggio/paesaggio6.jpg" class="gallery-img" alt="Paesaggio" loading="lazy"
+            srcset="images/paesaggio/paesaggio6.jpg 600w, images/paesaggio/paesaggio6.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/paesaggio/paesaggio7.jpg" class="gallery-img" alt="Paesaggio" loading="lazy"
+            srcset="images/paesaggio/paesaggio7.jpg 600w, images/paesaggio/paesaggio7.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/paesaggio/paesaggio8.jpg" class="gallery-img" alt="Paesaggio" loading="lazy"
+            srcset="images/paesaggio/paesaggio8.jpg 600w, images/paesaggio/paesaggio8.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/paesaggio/paesaggio9.jpg" class="gallery-img" alt="Paesaggio" loading="lazy"
+            srcset="images/paesaggio/paesaggio9.jpg 600w, images/paesaggio/paesaggio9.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/paesaggio/paesaggio10.jpg" class="gallery-img" alt="Paesaggio" loading="lazy"
+            srcset="images/paesaggio/paesaggio10.jpg 600w, images/paesaggio/paesaggio10.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <!-- STREET -->
+        <div class="gallery-item">
+          <img src="images/street/street1.jpg" class="gallery-img" alt="Street" loading="lazy"
+            srcset="images/street/street1.jpg 600w, images/street/street1.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/street/street3.jpg" class="gallery-img" alt="Street" loading="lazy"
+            srcset="images/street/street3.jpg 600w, images/street/street3.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <!-- DOG -->
+        <div class="gallery-item">
+          <img src="images/dog/dog1.jpg" class="gallery-img" alt="Dog" loading="lazy"
+            srcset="images/dog/dog1.jpg 600w, images/dog/dog1.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/dog/dog2.jpg" class="gallery-img" alt="Dog" loading="lazy"
+            srcset="images/dog/dog2.jpg 600w, images/dog/dog2.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/dog/dog3.jpg" class="gallery-img" alt="Dog" loading="lazy"
+            srcset="images/dog/dog3.jpg 600w, images/dog/dog3.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/dog/dog4.jpg" class="gallery-img" alt="Dog" loading="lazy"
+            srcset="images/dog/dog4.jpg 600w, images/dog/dog4.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/dog/dog5.jpg" class="gallery-img" alt="Dog" loading="lazy"
+            srcset="images/dog/dog5.jpg 600w, images/dog/dog5.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/dog/dog6.jpg" class="gallery-img" alt="Dog" loading="lazy"
+            srcset="images/dog/dog6.jpg 600w, images/dog/dog6.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/dog/dog7.jpg" class="gallery-img" alt="Dog" loading="lazy"
+            srcset="images/dog/dog7.jpg 600w, images/dog/dog7.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/dog/dog8.jpg" class="gallery-img" alt="Dog" loading="lazy"
+            srcset="images/dog/dog8.jpg 600w, images/dog/dog8.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/dog/dog9.jpg" class="gallery-img" alt="Dog" loading="lazy"
+            srcset="images/dog/dog9.jpg 600w, images/dog/dog9.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <!-- BIANCO E NERO -->
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn1.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn1.jpg 600w, images/bianco-nero/bn1.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn2.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn2.jpg 600w, images/bianco-nero/bn2.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn3.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn3.jpg 600w, images/bianco-nero/bn3.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn4.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn4.jpg 600w, images/bianco-nero/bn4.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn5.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn5.jpg 600w, images/bianco-nero/bn5.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn6.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn6.jpg 600w, images/bianco-nero/bn6.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn7.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn7.jpg 600w, images/bianco-nero/bn7.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn8.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn8.jpg 600w, images/bianco-nero/bn8.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn9.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn9.jpg 600w, images/bianco-nero/bn9.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn10.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn10.jpg 600w, images/bianco-nero/bn10.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn11.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn11.jpg 600w, images/bianco-nero/bn11.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn12.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn12.jpg 600w, images/bianco-nero/bn12.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/bianco-nero/bn13.jpg" class="gallery-img" alt="BN" loading="lazy"
+            srcset="images/bianco-nero/bn13.jpg 600w, images/bianco-nero/bn13.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <!-- MIX -->
+        <div class="gallery-item">
+          <img src="images/mix/mix1.jpg" class="gallery-img" alt="Mix" loading="lazy"
+            srcset="images/mix/mix1.jpg 600w, images/mix/mix1.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/mix/mix2.jpg" class="gallery-img" alt="Mix" loading="lazy"
+            srcset="images/mix/mix2.jpg 600w, images/mix/mix2.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="gallery-item">
+          <img src="images/mix/mix3.jpg" class="gallery-img" alt="Mix" loading="lazy"
+            srcset="images/mix/mix3.jpg 600w, images/mix/mix3.jpg 1200w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="lightbox">
+    <div class="lightbox-content">
+      <span class="lightbox-close">&times;</span>
+      <div class="lightbox-img-wrapper">
+        <img src="" alt="" class="lightbox-img" loading="eager">
+      </div>
+    </div>
+  </div>
+  <section id="about" class="about">
+    <div class="container">
+      <h2 class="section-title">Chi Sono</h2>
+      <div class="about-grid">
+        <div class="about-image">
+          <img src="images/profilo.jpg" alt="Salvatore Gasparre" class="about-img" loading="lazy"
+            srcset="images/profilo.jpg 320w, images/profilo.jpg 700w"
+            sizes="(max-width: 600px) 100vw, 50vw">
+        </div>
+        <div class="about-content">
+          <h3>Passione per la Fotografia</h3>
+          <p>
+            Mi chiamo <strong>Salvatore Gasparre</strong> e attraverso <strong>Esse Gi Photography</strong> racconto storie visive, emozioni autentiche e attimi irripetibili.
+          </p>
+          <p>
+            La mia fotografia nasce dall’osservazione della luce, dei dettagli e delle persone, con uno stile pulito, cinematografico ed emozionale.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="contact" class="contact">
+    <div class="container">
+      <h2 class="section-title">Contattami</h2>
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div>
+              <h3>Email</h3>
+              <p>test</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <div>
+              <h3>Telefono</h3>
+              <p>+39</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+            </div>
+          </div>
+        </div>
+        <form class="contact-form">
+          <div class="form-group">
+            <input type="text" class="form-input" id="name" placeholder=" " required>
+            <label for="name" class="form-label">Nome</label>
+          </div>
+          <div class="form-group">
+            <input type="email" class="form-input" id="email" placeholder=" " required>
+            <label for="email" class="form-label">Email</label>
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-input" id="subject" placeholder=" ">
+            <label for="subject" class="form-label">Oggetto</label>
+          </div>
+          <div class="form-group">
+            <textarea class="form-input" id="message" placeholder=" " required></textarea>
+            <label for="message" class="form-label">Messaggio</label>
+          </div>
+          <button type="submit" class="btn">Invia Messaggio</button>
+        </form>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <a href="#home" class="logo logo-photo">
+          <i class="fas fa-camera-retro"></i>
+          <span>ESSE GI</span>
+        </a>
+        <div class="footer-links">
+          <a href="#home">Home</a>
+          <a href="#portfolio">Portfolio</a>
+          <a href="#about">Chi Sono</a>
+          <a href="#contact">Contatti</a>
+        </div>
+        <div class="social-links">
+          <a href="https://www.instagram.com/_esse.gi.photography_/"><i class="fab fa-instagram"></i></a>
+        </div>
+        <p class="copyright">
+          © 2025 Esse Gi Photography – Salvatore Gasparre
+        </p>
+      </div>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    // Particles.js: only on desktop
+    if (window.innerWidth > 768) {
+      particlesJS('particles-js', {
+        particles: {
+          number: { value: 80, density: { enable: true, value_area: 800 } },
+          color: { value: "#d93a3a" },
+          shape: { type: "circle" },
+          opacity: { value: 0.5, random: true },
+          size: { value: 3, random: true },
+          line_linked: {
+            enable: true,
+            distance: 150,
+            color: "#d93a3a",
+            opacity: 0.4,
+            width: 1
+          },
+          move: {
+            enable: true,
+            speed: 2,
+            direction: "none",
+            random: true,
+            straight: false,
+            out_mode: "out",
+            bounce: false
+          }
+        },
+        interactivity: {
+          detect_on: "canvas",
+          events: {
+            onhover: { enable: true, mode: "repulse" },
+            onclick: { enable: true, mode: "push" },
+            resize: true
+          }
+        },
+        retina_detect: true
+      });
+    }
+    // Loader
+    window.addEventListener('load', () => {
+      const loader = document.querySelector('.loader');
+      loader.style.opacity = '0';
+      setTimeout(() => loader.style.display = 'none', 200);
+    });
+    // Header scroll effect
+    const header = document.querySelector('header');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 30) header.classList.add('scrolled');
+      else header.classList.remove('scrolled');
+    });
+    // Mobile menu toggle
+    const menuBtn = document.querySelector('.menu-btn');
+    const navLinks = document.querySelector('.nav-links');
+    menuBtn.addEventListener('click', function() {
+      navLinks.classList.toggle('active');
+      const icon = menuBtn.querySelector('i');
+      if (navLinks.classList.contains('active')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+      } else {
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    });
+    // Lightbox (performance-optimized, no captions/overlays)
+    const lightbox = document.querySelector('.lightbox');
+    const lightboxImg = document.querySelector('.lightbox-img');
+    const lightboxClose = document.querySelector('.lightbox-close');
+    document.querySelectorAll('.gallery-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const img = this.querySelector('.gallery-img');
+        lightboxImg.setAttribute('src', img.getAttribute('src'));
+        lightboxImg.setAttribute('alt', img.getAttribute('alt'));
+        if (img.hasAttribute('srcset')) lightboxImg.setAttribute('srcset', img.getAttribute('srcset'));
+        else lightboxImg.removeAttribute('srcset');
+        if (img.hasAttribute('sizes')) lightboxImg.setAttribute('sizes', img.getAttribute('sizes'));
+        else lightboxImg.removeAttribute('sizes');
+        lightbox.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', function(e) {
+      if (e.target === lightbox) closeLightbox();
+    });
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      document.body.style.overflow = 'auto';
+      lightboxImg.removeAttribute('src');
+      lightboxImg.removeAttribute('alt');
+      lightboxImg.removeAttribute('srcset');
+      lightboxImg.removeAttribute('sizes');
+    }
+    // Smooth scroll for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const targetId = this.getAttribute('href');
+        if (targetId === '#' || !document.querySelector(targetId)) return;
+        e.preventDefault();
+        // Close mobile menu if open
+        if (navLinks.classList.contains('active')) {
+          navLinks.classList.remove('active');
+          menuBtn.querySelector('i').classList.remove('fa-times');
+          menuBtn.querySelector('i').classList.add('fa-bars');
+        }
+        window.scrollTo({
+          top: document.querySelector(targetId).offsetTop - 65,
+          behavior: 'smooth'
+        });
+      });
+    });
+    // Scroll to section function
+    window.scrollToSection = function(sectionId) {
+      const section = document.querySelector(sectionId);
+      if (section) {
+        window.scrollTo({
+          top: section.offsetTop - 65,
+          behavior: 'smooth'
+        });
+      }
+    };
+  </script>
+</body>
+</html>
